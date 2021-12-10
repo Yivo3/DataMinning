@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Nov 28 14:57:32 2021
-
 @author: Jorge
 """
 
@@ -33,14 +32,18 @@ warnings.filterwarnings('once')
 #Manejo del conjunto de datos para realizar la seleccion de campos
 datos = pd.read_csv("data.csv")
 
-dmgData=datos[['Position','Champion','Kills','Deaths','Champion Damage Share','Result']]
+dmgData=datos[['Position','Champion','Kills','Deaths','Champion Damage Share','Time','Result']]
 dmgProv=dmgData[dmgData.Position=='Adc']
-dmgAdc=dmgProv[['Kills','Deaths','Champion Damage Share']]
+dmgAdc=dmgProv[['Kills','Deaths','Time','Result']]
+dmgAdc.loc[dmgAdc['Result'] == 'W', "Result"] = '1'
+dmgAdc.loc[dmgAdc['Result'] == 'L', "Result"] = '0'
+
+var='Result'
 # División de los datos en train y test
 # ------------------------------------------------------------------------------
 X_train, X_test, y_train, y_test = train_test_split(
-                                        dmgAdc.drop(columns = "Champion Damage Share"),
-                                        dmgAdc['Champion Damage Share'],
+                                        dmgAdc.drop(columns = var),
+                                        dmgAdc[var],
                                         random_state = 123
                                     )
 # Creación del modelo
@@ -63,8 +66,8 @@ print(f"Número de nodos terminales: {modelo.get_n_leaves()}")
 
 plot = plot_tree(
             decision_tree = modelo,
-            feature_names = dmgAdc.drop(columns = "Champion Damage Share").columns,
-            class_names   = 'Champion Damage Share',
+            feature_names = dmgAdc.drop(columns = var).columns,
+            class_names   = var,
             filled        = True,
             impurity      = False,
             fontsize      = 10,
@@ -76,6 +79,7 @@ plot = plot_tree(
 #-------------------------------------------------------------------------------
 texto_modelo = export_text(
                     decision_tree = modelo,
-                    feature_names = list(dmgAdc.drop(columns = "Champion Damage Share").columns)
+                    feature_names = list(dmgAdc.drop(columns = var).columns)
                )
 print(texto_modelo)
+
