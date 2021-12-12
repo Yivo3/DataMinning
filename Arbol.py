@@ -6,6 +6,7 @@ Created on Sat Dec 11 17:44:49 2021
 """
 
 import pandas as pd
+import numpy as np
 from sklearn.tree import DecisionTreeClassifier # Import Decision Tree Classifier
 from sklearn.model_selection import train_test_split # Import train_test_split function
 from sklearn import metrics #Import scikit-learn metrics module for accuracy calculation
@@ -14,6 +15,8 @@ from six import StringIO
 from IPython.display import Image  
 from sklearn.tree import export_graphviz
 import pydotplus
+import statsmodels.api as sm
+from sklearn.metrics import confusion_matrix
 
 # Configuración warnings
 # =================================================================================
@@ -39,7 +42,7 @@ y = data.Result # Target variable
 
 #Llenar subconjuntos de prueba y de entrenamiento
 #=================================================================================
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 70% training and 30% test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=1) # 70% training and 30% test
 
 # Crear el objeto del arbol de clasificación
 #=================================================================================
@@ -66,12 +69,6 @@ graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
 graph.write_png('Arbol.png')
 Image(graph.create_png())
 
+cm= confusion_matrix(y_test,y_pred)
 
-
-
-
-
-
-
-
-
+print(cm)
