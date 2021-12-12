@@ -39,10 +39,10 @@ warnings.filterwarnings('ignore')
 # Datos
 # ==============================================================================
 data = pd.read_csv("data.csv")
-
+#Se elimina un dato que no es representativo, pues no refleja la situación de los demás elementos del conjunto de datos
+data = data.drop(data[data['Creep Score']==50].index)
 generalData=data[['Position','Champion','Kills','Creep Score','Result','Time']]
 generalData=generalData[generalData.Position=='Adc']
-#generalData=generalData[generalData.Champion=='Miss Fortune']
 generalData=generalData[generalData.Result=='W']
 generalData=generalData[['Creep Score','Time']]
 
@@ -105,3 +105,29 @@ print("")
 print(f"El error (rmse) de test es: {rmse}")
 print(f"Coeficiente: {modelo.coef_}")
 print(f"Independiente: {modelo.intercept_}")
+
+# Gráfico final del modelo
+# ==============================================================================
+fig, ax = plt.subplots(figsize=(6, 3.84))
+def f(a,b,x):
+    r=a*x+b
+    return r
+
+x = range(0,2540)
+
+generalData.plot(
+    x    = 'Time',
+    y    = 'Creep Score',
+    c    = 'firebrick',
+    kind = "scatter",
+    ax   = ax
+)
+a=0.1744
+b=-23.9842
+graf=[f(a,b,i) for i in x]
+plt.xlim(1350, 2540)
+plt.ylim(190, 450)
+
+plt.plot(x, graf, color = "gray")
+
+ax.set_title('Farm por segundo respecto al tiempo');
